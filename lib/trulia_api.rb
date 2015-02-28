@@ -24,7 +24,6 @@ class TruliaAPI
     cities_in_state_xml = Nokogiri::HTML(open("http://api.trulia.com/webservices.php?library=LocationInfo&function=getCitiesInState&state=#{state}&apikey=#{@api_key}"))
     cities_in_state_xml.css("city").each do |city|
       cities[city.css("name").text.downcase] = {
-        state: state,
         zillow_id: city.css("cityid").text.to_i,
         longitude: city.css("longitude").text.to_d,
         latitude: city.css("latitude").text.to_d
@@ -38,7 +37,6 @@ class TruliaAPI
     zip_codes_in_state_xml = Nokogiri::HTML(open("http://api.trulia.com/webservices.php?library=LocationInfo&function=getZipCodesInState&state=#{state}&apikey=#{@api_key}"))
     zip_codes_in_state_xml.css("zipcode").each do |zip|
       zips[zip.css("name").text.downcase] = {
-        state: state,
         longitude: zip.css("longitude").text.to_d,
         latitude: zip.css("latitude").text.to_d
       }
@@ -63,7 +61,7 @@ class TruliaAPI
     neighborhoods = {}
     neighborhoods_in_city_xml = Nokogiri::HTML(open("http://api.trulia.com/webservices.php?library=LocationInfo&function=getNeighborhoodsInCity&city=#{CGI::escape(city)}&state=#{state}&apikey=#{@api_key}"))
     neighborhoods_in_city_xml.css("neighborhood").each do |neighborhood|
-      neighborhoods[neighborhood.css("name").text.downcase] = {
+      neeghborhoods[neighborhood.css("name").text.downcase] = {
         zillow_id: neighborhood.css("id").text.to_i,
       }
     end
@@ -72,21 +70,23 @@ class TruliaAPI
 
   def get_city_stats(city, state, startdate, enddate)
     city_stats = {}
+    bedrooms = {}
     city_stats_xml = Nokogiri::HTML(open("http://api.trulia.com/webservices.php?library=TruliaStats&function=getCityStats&city=#{CGI::escape(city)}&state=#{state}&startDate=#{startdate}&endDate=#{enddate}&apikey=#{@api_key}"))
 
     city_stats_xml.css("listingstat").each do |listingstat|
-      weekend_date = listingstat.css("weekendingdate").text.downcase
+      weekend_date          = listingstat.css("weekendingdate").text.downcase
       listingstat.css("subcategory").each do |subcategory|
-          city_stats = {weekend_date => {
-            subcategory.css("type").text.downcase => {
-              properties:           subcategory.css("numberofproperties").text,
-              medianlistingprice:   subcategory.css("medianlistingprice").text,
-              averagelistingprice:  subcategory.css("averagelistingprice").text
-          }}}
+        type                  = subcategory.css("type").text.downcase
+
+        bedrooms[type] = {
+          properties:           subcategory.css("numberofproperties").text,
+          medianlistingprice:   subcategory.css("medianlistingprice").text,
+          averagelistingprice:  subcategory.css("averagelistingprice").text
+        }
+        city_stats[weekend_date] = bedrooms
       end
     end
-    return "THIS IS NOT READY YET"
-    #return city_stats
+    return city_stats
   end
 
   def get_state_stats(city, state, startdate, enddate)
@@ -96,12 +96,12 @@ class TruliaAPI
     city_stats_xml.css("listingstat").each do |listingstat|
       weekend_date = listingstat.css("weekendingdate").text.downcase
       listingstat.css("subcategory").each do |subcategory|
-          city_stats = {weekend_date => {
-            subcategory.css("type").text.downcase => {
-              properties:           subcategory.css("numberofproperties").text,
-              medianlistingprice:   subcategory.css("medianlistingprice").text,
-              averagelistingprice:  subcategory.css("averagelistingprice").text
-          }}}
+        city_stats = {weekend_date => {
+          subcategory.css("type").text.downcase => {
+          properties:           subcategory.css("numberofproperties").text,
+          medianlistingprice:   subcategory.css("medianlistingprice").text,
+          averagelistingprice:  subcategory.css("averagelistingprice").text
+        }}}
       end
     end
     return puts "THIS IS NOT READY YET"
