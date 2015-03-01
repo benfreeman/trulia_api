@@ -19,6 +19,7 @@ trulia_api.get_states returns a hash of state data.
 ## http://developer.trulia.com/docs/read/LocationInfo/getZipCodesInState ##
 trulia_api.get_zip_codes('ca') returns a hash of zip data.
 
+## http://developer.trulia.com/docs/read/TruliaStats/getCityStats ##
 trulia_api.get_city_stats("new orleans", "la", "2015-01-01", "2015-01-31") returns city data. (dates are startdate and enddate)
 
 ## http://developer.trulia.com/docs/read/TruliaStats/getCountyStats ##
