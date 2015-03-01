@@ -89,23 +89,88 @@ class TruliaAPI
     return city_stats
   end
 
-  def get_state_stats(city, state, startdate, enddate)
-    city_stats = {}
-    city_stats_xml = Nokogiri::HTML(open("http://api.trulia.com/webservices.php?library=TruliaStats&function=getCityStats&city=#{CGI::escape(city)}&state=#{state}&startDate=#{startdate}&endDate=#{enddate}&apikey=#{@api_key}"))
+  def get_state_stats(state, startdate, enddate)
+    state_stats = {}
+    bedrooms = {}
+    state_stats_xml = Nokogiri::HTML(open("http://api.trulia.com/webservices.php?library=TruliaStats&function=getStateStats&state=#{state}&startDate=#{startdate}&endDate=#{enddate}&apikey=#{@api_key}"))
 
-    city_stats_xml.css("listingstat").each do |listingstat|
-      weekend_date = listingstat.css("weekendingdate").text.downcase
+    state_stats_xml.css("listingstat").each do |listingstat|
+      weekend_date          = listingstat.css("weekendingdate").text.downcase
       listingstat.css("subcategory").each do |subcategory|
-        city_stats = {weekend_date => {
-          subcategory.css("type").text.downcase => {
+        type                  = subcategory.css("type").text.downcase
+
+        bedrooms[type] = {
           properties:           subcategory.css("numberofproperties").text,
           medianlistingprice:   subcategory.css("medianlistingprice").text,
           averagelistingprice:  subcategory.css("averagelistingprice").text
-        }}}
+        }
+        state_stats[weekend_date] = bedrooms
       end
     end
-    return puts "THIS IS NOT READY YET"
-    #return city_stats
+    return state_stats
+  end
+
+  def get_zip_stats(zip, startdate, enddate)
+    zip_stats = {}
+    bedrooms = {}
+    zip_stats_xml = Nokogiri::HTML(open("http://api.trulia.com/webservices.php?library=TruliaStats&function=getZipCodeStats&zipCode=#{zip}&startDate=#{startdate}&endDate=#{enddate}&apikey=#{@api_key}"))
+
+    zip_stats_xml.css("listingstat").each do |listingstat|
+      weekend_date          = listingstat.css("weekendingdate").text.downcase
+      listingstat.css("subcategory").each do |subcategory|
+        type                  = subcategory.css("type").text.downcase
+
+        bedrooms[type] = {
+          properties:           subcategory.css("numberofproperties").text,
+          medianlistingprice:   subcategory.css("medianlistingprice").text,
+          averagelistingprice:  subcategory.css("averagelistingprice").text
+        }
+        zip_stats[weekend_date] = bedrooms
+      end
+    end
+    return zip_stats
+  end
+
+  def get_neighborhood_stats(nid, startdate, enddate)
+    neighborhood_stats = {}
+    bedrooms = {}
+    neighborhood_stats_xml = Nokogiri::HTML(open("http://api.trulia.com/webservices.php?library=TruliaStats&function=getNeighborhoodStats&neighborhoodId=#{nid}&startDate=#{startdate}&endDate=#{enddate}&apikey=#{@api_key}"))
+
+    neighborhood_stats_xml.css("listingstat").each do |listingstat|
+      weekend_date          = listingstat.css("weekendingdate").text.downcase
+      listingstat.css("subcategory").each do |subcategory|
+        type                  = subcategory.css("type").text.downcase
+
+        bedrooms[type] = {
+          properties:           subcategory.css("numberofproperties").text,
+          medianlistingprice:   subcategory.css("medianlistingprice").text,
+          averagelistingprice:  subcategory.css("averagelistingprice").text
+        }
+        neighborhood_stats[weekend_date] = bedrooms
+      end
+    end
+    return neighborhood_stats
+  end
+
+  def get_county_stats(county, state, startdate, enddate)
+    county_stats = {}
+    bedrooms = {}
+    county_stats_xml = Nokogiri::HTML(open("http://api.trulia.com/webservices.php?library=TruliaStats&function=getCountyStats&county=#{CGI::escape(county)}&state=#{state}&startDate=#{startdate}&endDate=#{enddate}&apikey=#{@api_key}"))
+
+    county_stats_xml.css("listingstat").each do |listingstat|
+      weekend_date          = listingstat.css("weekendingdate").text.downcase
+      listingstat.css("subcategory").each do |subcategory|
+        type                  = subcategory.css("type").text.downcase
+
+        bedrooms[type] = {
+          properties:           subcategory.css("numberofproperties").text,
+          medianlistingprice:   subcategory.css("medianlistingprice").text,
+          averagelistingprice:  subcategory.css("averagelistingprice").text
+        }
+        county_stats[weekend_date] = bedrooms
+      end
+    end
+    return county_stats
   end
 
 end
