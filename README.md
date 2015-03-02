@@ -4,7 +4,7 @@ Gem for interacting with the Trulia API
 Example:
 trulia_api = TruliaAPI.new 'MY_API_KEY'
 
-http://developer.trulia.com/docs/read/LocationInfo/getCitiesInState ##
+#http://developer.trulia.com/docs/read/LocationInfo/getCitiesInState ##
 trulia_api.get_cities('ca') returns a hash of city data.
 
 ## http://developer.trulia.com/docs/read/LocationInfo/getCountiesInState ##
