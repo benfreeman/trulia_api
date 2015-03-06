@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'trulia_api'
   s.description = 'Gem for interfacing with Trulias API'
-  s.version     = '1.6'
+  s.version     = '1.7'
   s.date        = '2015-02-02'
   s.summary     = ' TruliaAPI'
   s.authors     = ["Ben Freeman"]

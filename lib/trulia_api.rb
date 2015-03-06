@@ -61,7 +61,7 @@ class TruliaAPI
     neighborhoods = {}
     neighborhoods_in_city_xml = Nokogiri::HTML(open("http://api.trulia.com/webservices.php?library=LocationInfo&function=getNeighborhoodsInCity&city=#{CGI::escape(city)}&state=#{state}&apikey=#{@api_key}"))
     neighborhoods_in_city_xml.css("neighborhood").each do |neighborhood|
-      neeghborhoods[neighborhood.css("name").text.downcase] = {
+      neighborhoods[neighborhood.css("name").text.downcase] = {
         zillow_id: neighborhood.css("id").text.to_i,
       }
     end
